@@ -1,0 +1,29 @@
+name: medi
+description: A new Flutter project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.0.6 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+fonts:
+  - family: GmarketSansTTF
+    fonts:
+      - asset: assets/font/gmarket/GmarketSansTTFLight.ttf
+        weight: 300
+      - asset: assets/font/gmarket/GmarketSansTTFMedium.ttf
+        weight: 500
+      - asset: assets/font/gmarket/GmarketSansTTFBold.ttf
+        weight: 700
