@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:medi/components/medi_constants.dart';
 
 class AddMedicinePage extends StatefulWidget {
@@ -11,6 +14,7 @@ class AddMedicinePage extends StatefulWidget {
 class _AddMedicinePageState extends State<AddMedicinePage> {
   
   final _nameController = TextEditingController();
+  File? _pickedImage;
 
   @override
   void dispose() {
@@ -34,18 +38,36 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
               Text(
                 "어떤 약이예요?",
                 style: Theme.of(context).textTheme.headlineMedium,
-              ),
+              ), 
               const SizedBox(height: largeSpace),
               Center(
                 child: CircleAvatar(
                   radius: 40,
                   child: MaterialButton(
-                    onPressed: () {},
-                    child: const Icon(
-                      Icons.photo_camera,
-                      size: 30,
-                      color: Colors.white,
-                    ),
+                    padding:  _pickedImage == null ? null : EdgeInsets.zero,
+                    onPressed: () {
+                      ImagePicker()
+                        .pickImage(source: ImageSource.gallery)
+                        .then((xfile) {
+                          if (xfile == null) {
+                            return;
+                          } else {
+                            setState(() {
+                              _pickedImage = File(xfile.path);
+                            });
+                          }
+                        });
+                    },
+                    child: _pickedImage == null 
+                      ? const Icon(
+                          Icons.photo_camera,
+                          size: 30,
+                          color: Colors.white,
+                        ) 
+                      : CircleAvatar(
+                        radius: 40,
+                        foregroundImage: FileImage(_pickedImage!),
+                      ),
                   ),
                 ),
               ),
