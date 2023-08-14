@@ -18,12 +18,12 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-fonts:
-  - family: GmarketSansTTF
-    fonts:
-      - asset: assets/font/gmarket/GmarketSansTTFLight.ttf
-        weight: 300
-      - asset: assets/font/gmarket/GmarketSansTTFMedium.ttf
-        weight: 500
-      - asset: assets/font/gmarket/GmarketSansTTFBold.ttf
-        weight: 700
+  fonts:
+    - family: GmarketSansTTF
+      fonts:
+        - asset: assets/font/gmarket/GmarketSansTTFLight.ttf
+          weight: 300
+        - asset: assets/font/gmarket/GmarketSansTTFMedium.ttf
+          weight: 500
+        - asset: assets/font/gmarket/GmarketSansTTFBold.ttf
+          weight: 700

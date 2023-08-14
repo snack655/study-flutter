@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:medi/pages/home_page.dart';
+import 'components/medi_themes.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,12 +11,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: MediThemes.lightTheme,
+      home: const HomePage(),
     );
   }
 }
