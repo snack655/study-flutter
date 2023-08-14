@@ -43,38 +43,39 @@ class _HomePageState extends State<HomePage> {
 
   BottomAppBar _buildBottomAppBar() {
     return BottomAppBar(
-            elevation: 0,
-            child: Container(
-              height: kBottomNavigationBarHeight,
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  MaterialButton(
-                    onPressed: () {
-                      _onCurrentPage(0);
-                    },
-                    child: Icon(
-                      Icons.check,
-                      color: _currentIndex == 0
-                          ? MediColors.primaryColor
-                          : Colors.grey,
-                    ),
-                  ),
-                  MaterialButton(
-                    child: Icon(
-                      Icons.fact_check_rounded,
-                      color: _currentIndex == 1
-                          ? MediColors.primaryColor
-                          : Colors.grey,
-                    ),
-                    onPressed: () {
-                      _onCurrentPage(1);
-                    },
-                  ),
-                ],
+      elevation: 0,
+      child: Container(
+        height: kBottomNavigationBarHeight,
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            MaterialButton(
+              onPressed: () {
+                _onCurrentPage(0);
+              },
+              child: Icon(
+                Icons.check,
+                color: _currentIndex == 0
+                    ? MediColors.primaryColor
+                    : Colors.grey,
               ),
-            ));
+            ),
+            MaterialButton(
+              child: Icon(
+                Icons.fact_check_rounded,
+                color: _currentIndex == 1
+                    ? MediColors.primaryColor
+                    : Colors.grey,
+              ),
+              onPressed: () {
+                _onCurrentPage(1);
+              },
+            ),
+          ],
+        ),
+      )
+    );
   }
 
   void _onCurrentPage(int pageIndex) {
