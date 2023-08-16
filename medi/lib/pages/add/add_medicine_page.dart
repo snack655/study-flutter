@@ -12,7 +12,6 @@ class AddMedicinePage extends StatefulWidget {
 
 class _AddMedicinePageState extends State<AddMedicinePage> {
   final _nameController = TextEditingController();
-  File? _pickedImage;
 
   @override
   void dispose() {
@@ -39,76 +38,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: largeSpace),
-                Center(
-                  child: CircleAvatar(
-                    radius: 40,
-                    child: MaterialButton(
-                      padding: _pickedImage == null ? null : EdgeInsets.zero,
-                      onPressed: () {
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (context) {
-                              return SafeArea(
-                                child: Padding(
-                                  padding: pagePadding,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          ImagePicker()
-                                            .pickImage(source: ImageSource.camera)
-                                            .then((xfile) {
-                                              if (xfile == null) {
-                                                Navigator.maybePop(context);
-                                                return;
-                                              } else {
-                                                setState(() {
-                                                  _pickedImage = File(xfile.path);
-                                                  Navigator.maybePop(context);
-                                                });
-                                              }
-                                            });
-                                        },
-                                        child: const Text('카메라로 촬영'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          ImagePicker()
-                                            .pickImage(source: ImageSource.gallery)
-                                            .then((xfile) {
-                                              if (xfile == null) {
-                                                Navigator.maybePop(context);
-                                                return;
-                                              } else {
-                                                setState(() {
-                                                  _pickedImage = File(xfile.path);
-                                                  Navigator.maybePop(context);
-                                                });
-                                              }
-                                            });
-                                        },
-                                        child: const Text('앨범에서 가져오기'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            });
-                      },
-                      child: _pickedImage == null
-                          ? const Icon(
-                              Icons.photo_camera,
-                              size: 30,
-                              color: Colors.white,
-                            )
-                          : CircleAvatar(
-                              radius: 40,
-                              foregroundImage: FileImage(_pickedImage!),
-                            ),
-                    ),
-                  ),
-                ),
+                const Center(child: MedicineImageButton()),
                 const SizedBox(height: largeSpace + regularSpace),
                 Text(
                   "약 이름",
@@ -144,6 +74,95 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
               child: const Text('다음'),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class MedicineImageButton extends StatefulWidget {
+  const MedicineImageButton({super.key});
+
+  @override
+  State<MedicineImageButton> createState() => _MedicineImageButtonState();
+}
+
+class _MedicineImageButtonState extends State<MedicineImageButton> {
+  File? _pickedImage;
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      radius: 40,
+      child: MaterialButton(
+        padding: _pickedImage == null ? null : EdgeInsets.zero,
+        onPressed: _showBottomSheet,
+        child: _pickedImage == null
+            ? const Icon(
+                Icons.photo_camera,
+                size: 30,
+                color: Colors.white,
+              )
+            : CircleAvatar(
+                radius: 40,
+                foregroundImage: FileImage(_pickedImage!),
+              ),
+      ),
+    );
+  }
+
+  void _showBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return PickImageBottomSheet(
+            onPressedCamera: () => _onPressedModalButton(ImageSource.camera),
+            onPressedGallery: () => _onPressedModalButton(ImageSource.gallery),
+          );
+        });
+  }
+
+  void _onPressedModalButton(ImageSource source) {
+    ImagePicker().pickImage(source: source).then((xfile) {
+      if (xfile == null) {
+        Navigator.maybePop(context);
+        return;
+      } else {
+        setState(() {
+          _pickedImage = File(xfile.path);
+          Navigator.maybePop(context);
+        });
+      }
+    });
+  }
+}
+
+class PickImageBottomSheet extends StatelessWidget {
+  const PickImageBottomSheet(
+      {super.key,
+      required this.onPressedCamera,
+      required this.onPressedGallery});
+
+  final VoidCallback onPressedCamera;
+  final VoidCallback onPressedGallery;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: pagePadding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextButton(
+              onPressed: onPressedCamera,
+              child: const Text('카메라로 촬영'),
+            ),
+            TextButton(
+              onPressed: onPressedGallery,
+              child: const Text('앨범에서 가져오기'),
+            ),
+          ],
         ),
       ),
     );
