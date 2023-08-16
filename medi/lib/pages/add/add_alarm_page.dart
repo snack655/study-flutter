@@ -6,6 +6,7 @@ import 'package:medi/components/medi_colors.dart';
 import 'package:medi/components/medi_constants.dart';
 import 'package:medi/components/medi_widgets.dart';
 import 'package:medi/services/add_medicine_service.dart';
+import '../../main.dart';
 import 'components/add_page_widget.dart';
 
 class AddAlarmPage extends StatelessWidget {
@@ -37,14 +38,29 @@ class AddAlarmPage extends StatelessWidget {
                 return ListView(
                   children: alarmWidgets,
                 );
-              }, 
+              },
               animation: service,
             ),
           ),
         ],
       ),
       bottomNavigationBar: BottomSubmitButton(
-        onPressed: () {},
+        onPressed: () async {
+          bool result = false;
+          // 1. add alarm
+          for (var alarm in service.alarms) {
+            result = await notification.addNotification(
+              alarmTimeStr: alarm,
+              title: '$alarm 약 먹을 시간이예요!', 
+              body: '$medicineName 복약헀다고 알려주세요!',
+            );
+          }
+          if (!result) {
+            showPermissionDenied(context, permission: '알람');
+          }
+          // 2. save image (local dir)
+          // 3. add medicine model (local DB, hive)
+        },
         text: "완료",
       ),
     );
@@ -81,8 +97,6 @@ class AlarmBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Row(
       children: [
         Expanded(
@@ -122,7 +136,7 @@ class AlarmBox extends StatelessWidget {
 class TimePickerBottomSheet extends StatelessWidget {
   TimePickerBottomSheet({
     super.key,
-    required this.initialTime, 
+    required this.initialTime,
     required this.service,
   });
 
@@ -175,9 +189,8 @@ class TimePickerBottomSheet extends StatelessWidget {
                   ),
                   onPressed: () {
                     service.setAlarm(
-                      prevTime: initialTime,
-                      setTime: _setDateTime ?? initialDateTime
-                    );
+                        prevTime: initialTime,
+                        setTime: _setDateTime ?? initialDateTime);
                     Navigator.pop(context);
                   },
                   child: const Text("선택"),
