@@ -56,6 +56,7 @@ class AddAlarmPage extends StatelessWidget {
             );
           }
           if (!result) {
+            if(context.mounted) return;
             showPermissionDenied(context, permission: '알람');
           }
           // 2. save image (local dir)

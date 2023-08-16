@@ -19,10 +19,10 @@ class MediNotificationService {
   Future<void> initializeNotification() async {
     const initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const initializationSettingsIOS = IOSInitializationSettings(
+    const initializationSettingsIOS = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
-      reqeustSoundPermission: false,
+      requestSoundPermission: false,
     );
 
     const initializationSettings = InitializationSettings(
@@ -77,7 +77,6 @@ class MediNotificationService {
         alarmTime.minute,
       ),
       details,
-      androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation: 
         UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
@@ -95,7 +94,7 @@ class MediNotificationService {
       importance: Importance.max,
       priority: Priority.max,
     );
-    const ios = IOSNotificationDetails();
+    const ios = DarwinNotificationDetails();
 
     return NotificationDetails(
       android: android,
