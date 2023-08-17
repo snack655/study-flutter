@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:medi/components/medi_colors.dart';
 import 'package:medi/components/medi_constants.dart';
 import 'package:medi/components/medi_widgets.dart';
+import 'package:medi/models/medicine.dart';
 import 'package:medi/services/add_medicine_service.dart';
+import 'package:medi/services/medi_file_service.dart';
 import '../../main.dart';
 import 'components/add_page_widget.dart';
 
@@ -51,6 +53,7 @@ class AddAlarmPage extends StatelessWidget {
           // 1. add alarm
           for (var alarm in service.alarms) {
             result = await notification.addNotification(
+              medicineId: medicineRepository.newId,
               alarmTimeStr: alarm,
               title: '$alarm 약 먹을 시간이예요!',
               body: '$medicineName 복약헀다고 알려주세요!',
@@ -58,10 +61,26 @@ class AddAlarmPage extends StatelessWidget {
           }
           if (!result) {
             // ignore: use_build_context_synchronously
-            showPermissionDenied(context, permission: '알람');
+            return showPermissionDenied(context, permission: '알람');
           }
+
           // 2. save image (local dir)
+          String? imageFilePath;
+          if (medicineImage != null) {
+            imageFilePath = await saveImageToLocalDirectory(medicineImage!);
+          }
+
           // 3. add medicine model (local DB, hive)
+          final medicine = Medicine(
+            id: medicineRepository.newId,
+            name: medicineName,
+            imagePath: imageFilePath,
+            alarms: service.alarms,
+          );
+          medicineRepository.addMedicine(medicine);
+
+          // ignore: use_build_context_synchronously
+          Navigator.popUntil(context, (route) => route.isFirst);
         },
         text: "완료",
       ),
