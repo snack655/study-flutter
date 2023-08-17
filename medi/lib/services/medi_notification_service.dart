@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_native_timezone_updated_gradle/flutter_native_timezone.dart';
 import 'package:intl/intl.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
@@ -17,7 +17,8 @@ class MediNotificationService {
   }
 
   Future<void> initializeNotification() async {
-    const initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const initializationSettingsIOS = DarwinInitializationSettings(
       requestAlertPermission: false,
@@ -47,15 +48,14 @@ class MediNotificationService {
 
     /// exception
     final now = tz.TZDateTime.now(tz.local);
-    final alarmTime = DateFormat("HH:mm").parse(alarmTimeStr);
+    final alarmTime = DateFormat('HH:mm').parse(alarmTimeStr);
     final day = (alarmTime.hour < now.hour ||
-              alarmTime.hour == now.hour && alarmTime.minute <= now.minute)
-              ? now.day + 1
-              : now.day;
-    
+            alarmTime.hour == now.hour && alarmTime.minute <= now.minute)
+        ? now.day + 1
+        : now.day;
+
     /// id
     final alarmTimeId = alarmTimeStr.replaceAll(':', '');
-
 
     /// add schedule notification
     final details = _notificationDetails(
@@ -66,7 +66,7 @@ class MediNotificationService {
 
     await notification.zonedSchedule(
       int.parse(alarmTimeId), // unique
-      title, 
+      title,
       body,
       tz.TZDateTime(
         tz.local,
@@ -77,18 +77,22 @@ class MediNotificationService {
         alarmTime.minute,
       ),
       details,
-      uiLocalNotificationDateInterpretation: 
-        UILocalNotificationDateInterpretation.absoluteTime,
+      //androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
 
     return true;
   }
 
-  NotificationDetails _notificationDetails(String id,
-      {required String title, required String body}) {
+  NotificationDetails _notificationDetails(
+    String id, {
+    required String title,
+    required String body,
+  }) {
     final android = AndroidNotificationDetails(
-      id, 
+      id,
       title,
       channelDescription: body,
       importance: Importance.max,
@@ -105,14 +109,14 @@ class MediNotificationService {
   Future<bool> get permissionNotification async {
     if (Platform.isAndroid) {
       return true;
-    }
-    if (Platform.isIOS) {
+    } else if (Platform.isIOS) {
       return await notification
               .resolvePlatformSpecificImplementation<
                   IOSFlutterLocalNotificationsPlugin>()
               ?.requestPermissions(alert: true, badge: true, sound: true) ??
           false;
+    } else {
+      return false;
     }
-    return false;
   }
 }

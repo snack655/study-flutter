@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
-class AddMedicineService with ChangeNotifier{
+class AddMedicineService with ChangeNotifier {
   final _alarms = <String>{
     "08:00",
     "13:00",
@@ -31,7 +31,7 @@ class AddMedicineService with ChangeNotifier{
 
     final setTimeStr = DateFormat("HH:mm").format(setTime);
     _alarms.add(setTimeStr);
-    
+
     notifyListeners();
   }
 }

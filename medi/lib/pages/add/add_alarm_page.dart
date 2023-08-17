@@ -47,16 +47,17 @@ class AddAlarmPage extends StatelessWidget {
       bottomNavigationBar: BottomSubmitButton(
         onPressed: () async {
           bool result = false;
+
           // 1. add alarm
           for (var alarm in service.alarms) {
             result = await notification.addNotification(
               alarmTimeStr: alarm,
-              title: '$alarm 약 먹을 시간이예요!', 
+              title: '$alarm 약 먹을 시간이예요!',
               body: '$medicineName 복약헀다고 알려주세요!',
             );
           }
           if (!result) {
-            if(context.mounted) return;
+            // ignore: use_build_context_synchronously
             showPermissionDenied(context, permission: '알람');
           }
           // 2. save image (local dir)
