@@ -1,23 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:medi/components/medi_constants.dart';
+import 'package:medi/main.dart';
+import 'package:medi/models/medicine_alarm.dart';
+import '../../models/medicine.dart';
 
 class TodayPage extends StatelessWidget {
-  TodayPage({super.key});
-
-  final list = [
-    '약',
-    '약 이름',
-    '약 이름 테스트',
-    '약이름한둘약이름한둘약이름한둘약이름한둘',
-    '약',
-    '약 이름',
-    '약 이름 테스트',
-    '약이름한둘약이름한둘약이름한둘약이름한둘',
-    '약',
-    '약 이름',
-    '약 이름 테스트',
-    '약이름한둘약이름한둘약이름한둘약이름한둘',
-  ];
+  const TodayPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,28 +25,55 @@ class TodayPage extends StatelessWidget {
           thickness: 2.0,
         ),
         Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: smallSpace),
-            itemCount: list.length,
-            itemBuilder: (context, index) {
-              return MedicineListTile(
-                name: list[index],
-              );
-            },
-            separatorBuilder: (context, index) => const Divider(
-              height: regularSpace,
-            ),
+          child: ValueListenableBuilder(
+            valueListenable: medicineRepository.medicineBox.listenable(),
+            builder: _builderMedicineListView,
           ),
         ),
       ],
     );
   }
+
+  Widget _builderMedicineListView(context, Box<Medicine> box, _) {
+    final medicines = box.values.toList();
+    final medicineAlarms = <MedicineAlarm>[];
+
+    for (var medicine in medicines) {
+      for (var alarm in medicine.alarms) {
+        medicineAlarms.add(
+          MedicineAlarm(
+            medicine.id,
+            medicine.name,
+            medicine.imagePath,
+            alarm,
+            medicine.key,
+          ),
+        );
+      }
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: smallSpace),
+      itemCount: medicineAlarms.length,
+      itemBuilder: (context, index) {
+        return MedicineListTile(
+          medicineAlarm: medicineAlarms[index],
+        );
+      },
+      separatorBuilder: (context, index) => const Divider(
+        height: regularSpace,
+      ),
+    );
+  }
 }
 
 class MedicineListTile extends StatelessWidget {
-  const MedicineListTile({super.key, required this.name});
+  const MedicineListTile({
+    super.key,
+    required this.medicineAlarm,
+  });
 
-  final String name;
+  final MedicineAlarm medicineAlarm;
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +84,11 @@ class MedicineListTile extends StatelessWidget {
         MaterialButton(
           padding: EdgeInsets.zero,
           onPressed: () {},
-          child: const CircleAvatar(
+          child: CircleAvatar(
             radius: 40,
+            foregroundImage: medicineAlarm.imagePath == null
+                ? null
+                : FileImage(File(medicineAlarm.imagePath!)),
           ),
         ),
         const SizedBox(width: smallSpace),
@@ -76,7 +97,7 @@ class MedicineListTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '🕑 02:00',
+                '🕑 ${medicineAlarm.alarmTime}',
                 style: textStyle,
               ),
               const SizedBox(height: 6),
@@ -84,7 +105,7 @@ class MedicineListTile extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
-                    "$name,",
+                    "${medicineAlarm.name},",
                     style: textStyle,
                   ),
                   TileActionButton(
@@ -103,7 +124,9 @@ class MedicineListTile extends StatelessWidget {
           ),
         ),
         MaterialButton(
-          onPressed: () {},
+          onPressed: () {
+            medicineRepository.deleteMedicine(key)
+          },
           child: const Icon(Icons.more_vert),
         ),
       ],
