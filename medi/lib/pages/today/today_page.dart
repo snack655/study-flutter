@@ -6,6 +6,7 @@ import 'package:medi/components/medi_constants.dart';
 import 'package:medi/components/medi_page_route.dart';
 import 'package:medi/main.dart';
 import 'package:medi/models/medicine_alarm.dart';
+import 'package:medi/pages/today/today_empty_widget.dart';
 import '../../models/medicine.dart';
 
 class TodayPage extends StatelessWidget {
@@ -21,10 +22,6 @@ class TodayPage extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: regularSpace),
-        const Divider(
-          height: 1,
-          thickness: 2.0,
-        ),
         Expanded(
           child: ValueListenableBuilder(
             valueListenable: medicineRepository.medicineBox.listenable(),
@@ -38,6 +35,10 @@ class TodayPage extends StatelessWidget {
   Widget _builderMedicineListView(context, Box<Medicine> box, _) {
     final medicines = box.values.toList();
     final medicineAlarms = <MedicineAlarm>[];
+
+    if (medicines.isEmpty) {
+      return const TodayEmpty();
+    }
 
     for (var medicine in medicines) {
       for (var alarm in medicine.alarms) {
@@ -53,17 +54,25 @@ class TodayPage extends StatelessWidget {
       }
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: smallSpace),
-      itemCount: medicineAlarms.length,
-      itemBuilder: (context, index) {
-        return MedicineListTile(
-          medicineAlarm: medicineAlarms[index],
-        );
-      },
-      separatorBuilder: (context, index) => const Divider(
-        height: regularSpace,
-      ),
+    return Column(
+      children: [
+        const Divider(height: 1, thickness: 1.0),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: smallSpace),
+            itemCount: medicineAlarms.length,
+            itemBuilder: (context, index) {
+              return MedicineListTile(
+                medicineAlarm: medicineAlarms[index],
+              );
+            },
+            separatorBuilder: (context, index) => const Divider(
+              height: regularSpace,
+            ),
+          ),
+        ),
+        const Divider(height: 1, thickness: 1.0),
+      ],
     );
   }
 }
@@ -124,7 +133,9 @@ class MedicineListTile extends StatelessWidget {
                   ),
                   Text('|', style: textStyle),
                   TileActionButton(
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(context: context, builder: (context) => )
+                    },
                     title: '아까',
                   ),
                   Text('먹었어요!', style: textStyle),
