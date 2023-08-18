@@ -6,6 +6,7 @@ import 'package:medi/components/medi_constants.dart';
 import 'package:medi/components/medi_page_route.dart';
 import 'package:medi/main.dart';
 import 'package:medi/models/medicine_alarm.dart';
+import 'package:medi/models/medicine_history.dart';
 import 'package:medi/pages/bottomsheet/time_setting_bottomsheet.dart';
 import 'package:medi/pages/today/today_empty_widget.dart';
 import '../../models/medicine.dart';
@@ -140,8 +141,18 @@ class MedicineListTile extends StatelessWidget {
                         builder: (context) => TimeSettingBottomSheet(
                           initialTime: medicineAlarm.alarmTime,
                         ),
-                      ).then((value) {
-                        debugPrint(value);
+                      ).then((takeDateTime) {
+                        if (takeDateTime == null || takeDateTime is! DateTime) {
+                          return;
+                        }
+
+                        historyRepository.addHistory(
+                          MedicineHistory(
+                            medicineId: medicineAlarm.id,
+                            alarmTime: medicineAlarm.alarmTime,
+                            takeTime: takeDateTime,
+                          ),
+                        );
                       });
                     },
                     title: '아까',
