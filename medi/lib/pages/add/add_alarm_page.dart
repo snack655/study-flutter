@@ -73,7 +73,7 @@ class AddAlarmPage extends StatelessWidget {
             id: medicineRepository.newId,
             name: medicineName,
             imagePath: imageFilePath,
-            alarms: service.alarms,
+            alarms: service.alarms.toList(),
           );
           medicineRepository.addMedicine(medicine);
 

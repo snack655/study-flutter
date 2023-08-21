@@ -21,7 +21,7 @@ class Medicine extends HiveObject {
   final String? imagePath;
 
   @HiveField(3)
-  final Set<String> alarms;
+  final List<String> alarms;
 
   @override
   String toString() {

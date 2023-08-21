@@ -11,7 +11,7 @@ class MediHive {
     Hive.registerAdapter<MedicineHistory>(MedicineHistoryAdapter());
 
     await Hive.openBox<Medicine>(MediHiveBox.medicine);
-    await Hive.openBox<MedicineHistory>(MediHiveBox.medicine);
+    await Hive.openBox<MedicineHistory>(MediHiveBox.medicineHistory);
   }
 }
 

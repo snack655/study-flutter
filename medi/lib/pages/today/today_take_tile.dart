@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../components/medi_constants.dart';
 import '../../components/medi_page_route.dart';
@@ -51,31 +52,20 @@ class BeforeTakeTile extends StatelessWidget {
               style: textStyle,
             ),
             TileActionButton(
-              onTap: () {},
+              onTap: () {
+                historyRepository.addHistory(
+                  MedicineHistory(
+                    medicineId: medicineAlarm.id,
+                    alarmTime: medicineAlarm.alarmTime,
+                    takeTime: DateTime.now(),
+                  ),
+                );
+              },
               title: '지금',
             ),
             Text('|', style: textStyle),
             TileActionButton(
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => TimeSettingBottomSheet(
-                    initialTime: medicineAlarm.alarmTime,
-                  ),
-                ).then((takeDateTime) {
-                  if (takeDateTime == null || takeDateTime is! DateTime) {
-                    return;
-                  }
-
-                  historyRepository.addHistory(
-                    MedicineHistory(
-                      medicineId: medicineAlarm.id,
-                      alarmTime: medicineAlarm.alarmTime,
-                      takeTime: takeDateTime,
-                    ),
-                  );
-                });
-              },
+              onTap: () => _onPreviousTake(context),
               title: '아까',
             ),
             Text('먹었어요!', style: textStyle),
@@ -84,15 +74,38 @@ class BeforeTakeTile extends StatelessWidget {
       ],
     );
   }
+
+  void _onPreviousTake(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => TimeSettingBottomSheet(
+        initialTime: medicineAlarm.alarmTime,
+      ),
+    ).then((takeDateTime) {
+      if (takeDateTime == null || takeDateTime is! DateTime) {
+        return;
+      }
+
+      historyRepository.addHistory(
+        MedicineHistory(
+          medicineId: medicineAlarm.id,
+          alarmTime: medicineAlarm.alarmTime,
+          takeTime: takeDateTime,
+        ),
+      );
+    });
+  }
 }
 
 class AfterTakeTile extends StatelessWidget {
   const AfterTakeTile({
     super.key,
     required this.medicineAlarm,
+    required this.history,
   });
 
   final MedicineAlarm medicineAlarm;
+  final MedicineHistory history;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +145,7 @@ class AfterTakeTile extends StatelessWidget {
             style: textStyle,
             children: [
               TextSpan(
-                text: '20:19',
+                text: takeTimeStr,
                 style: textStyle?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
@@ -147,15 +160,49 @@ class AfterTakeTile extends StatelessWidget {
               style: textStyle,
             ),
             TileActionButton(
-              onTap: () {},
-              title: '20시 19분에',
+              onTap: () => _onTap(context),
+              title: DateFormat("HH시 mm분에").format(history.takeTime),
             ),
-            Text('|', style: textStyle),
             Text('먹었어요!', style: textStyle),
           ],
         )
       ],
     );
+  }
+
+  String get takeTimeStr => DateFormat('HH:mm').format(history.takeTime);
+
+  void _onTap(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => TimeSettingBottomSheet(
+        initialTime: takeTimeStr,
+        submitTitle: "수정",
+        bottomWidget: TextButton(
+          onPressed: () {
+            historyRepository.deleteHistory(history.key);
+            Navigator.pop(context);
+          },
+          child: Text(
+            '복약 시간을 지우고 싶어요.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+      ),
+    ).then((takeDateTime) {
+      if (takeDateTime == null || takeDateTime is! DateTime) {
+        return;
+      }
+
+      historyRepository.updateHistory(
+        key: history.key,
+        medicineHistory: MedicineHistory(
+          medicineId: medicineAlarm.id,
+          alarmTime: medicineAlarm.alarmTime,
+          takeTime: takeDateTime,
+        ),
+      );
+    });
   }
 }
 
