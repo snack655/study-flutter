@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:medi/pages/bottomsheet/more_action_bottomsheet.dart';
 
 import '../../components/medi_constants.dart';
 import '../../components/medi_page_route.dart';
@@ -226,7 +227,14 @@ class _MoreButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: () {
-        medicineRepository.deleteMedicine(medicineAlarm.key);
+        //medicineRepository.deleteMedicine(medicineAlarm.key);
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => MoreActionBottomSheet(
+            onPressedModify: () {},
+            onPressedDeleteOnlyMedicine: () {},
+          ),
+        );
       },
       child: const Icon(Icons.more_vert),
     );
