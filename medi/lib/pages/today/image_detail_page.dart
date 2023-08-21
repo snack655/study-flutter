@@ -2,15 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../models/medicine_alarm.dart';
-
 class ImageDetailPage extends StatelessWidget {
   const ImageDetailPage({
     super.key,
-    required this.medicineAlarm,
+    required this.imagePath,
   });
 
-  final MedicineAlarm medicineAlarm;
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +18,7 @@ class ImageDetailPage extends StatelessWidget {
       ),
       body: Center(
         child: Image.file(
-          File(medicineAlarm.imagePath!),
+          File(imagePath),
         ),
       ),
     );

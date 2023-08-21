@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:medi/pages/home_page.dart';
 import 'package:medi/repositories/medi_hive.dart';
 import 'package:medi/repositories/medicine_history_repository.dart';
@@ -13,6 +14,8 @@ final historyRepository = MedicineHistoryRepository();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting();
 
   await notification.initializeTimeZone();
   await notification.initializeNotification();
