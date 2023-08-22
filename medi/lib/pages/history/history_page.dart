@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
 import 'package:medi/main.dart';
+import 'package:medi/pages/today/history_empty_widget.dart';
 
 import '../../components/medi_constants.dart';
 import '../../models/medicine.dart';
@@ -33,6 +34,9 @@ class HistoryPage extends StatelessWidget {
 
   Widget _buildListView(context, Box<MedicineHistory> historyBox, _) {
     final histories = historyBox.values.toList().reversed.toList();
+    if (histories.isEmpty) {
+      return const HistoryEmpty();
+    }
     return ListView.builder(
       itemCount: histories.length,
       itemBuilder: (context, index) {

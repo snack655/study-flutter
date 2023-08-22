@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:medi/pages/add/add_medicine_page.dart';
 import 'package:medi/pages/bottomsheet/more_action_bottomsheet.dart';
 
 import '../../components/medi_constants.dart';
@@ -231,7 +232,13 @@ class _MoreButton extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           builder: (context) => MoreActionBottomSheet(
-            onPressedModify: () {},
+            onPressedModify: () {
+              Navigator.push(
+                context,
+                FadePageRoute(
+                    page: AddMedicinePage(updateMedicineId: medicineAlarm.id)),
+              ).then((_) => Navigator.maybePop(context));
+            },
             onPressedDeleteOnlyMedicine: () {
               // 1. 알람 색제
               notification.deleteMultipleAlarm(alarmIds);
@@ -300,6 +307,7 @@ class MedicineImageButton extends StatelessWidget {
       child: CircleAvatar(
         radius: 40,
         foregroundImage: imagePath == null ? null : FileImage(File(imagePath!)),
+        child: imagePath == null ? const Icon(Icons.alarm) : null,
       ),
     );
   }
